@@ -22,6 +22,13 @@ local function freestyle(bar)
 end
 
 local applystyle = function(bar)
+	BAR=bar
+	bar.candyBarBar:SetStatusBarTexture(C.media.normTex)
+	bar.candyBarLabel:SetFont(C["media"].uffont, 12, "OUTLINE")
+	bar.candyBarDuration:SetFont(C["media"].uffont, 12, "OUTLINE")
+	bar.candyBarBackground:SetTexture(C.media.normTex)
+--	bar.candyBarBarIconFrame
+	bar:SetScale(1)
 	local bg=nil
 	if #freeBackgrounds > 0 then
 		bg = table.remove(freeBackgrounds)
@@ -45,29 +52,24 @@ local function registerMyStyle()
 	local bars = BigWigs:GetPlugin("Bars", true)
 	if not bars then return end
 	f:UnregisterEvent("ADDON_LOADED")
-	f:UnregisterEvent("PLAYER_LOGIN")
+
 	bars:RegisterBarStyle("identifier", {
 		apiVersion = 1,
 		version = 1,
-		GetSpacing = function(bar) return 4 end,
+		GetSpacing = function(bar) return T.Scale(6) end,
 		ApplyStyle = applystyle,
 		BarStopped = freestyle,
-		GetStyleName = function() return "Tukui Editless" end,
+		GetStyleName = function() return "Tukui by Affli" end,
 	})
 end
 f:RegisterEvent("ADDON_LOADED")
---f:RegisterEvent("PLAYER_LOGIN")
 
 local reason = nil
 f:SetScript("OnEvent", function(self, event, msg)
 	if event == "ADDON_LOADED" then
---		if not reason then reason = (select(6, GetAddOnInfo("BigWigs_Plugins"))) end
---		if (reason == "MISSING" and msg == "BigWigs") or msg == "BigWigs_Plugins" then
 		if msg == "BigWigs" or msg == "BigWigs_Plugins" then
 			registerMyStyle()
 		end
---	elseif event == "PLAYER_LOGIN" then
---		registerMyStyle()
 	end
 end)
 
