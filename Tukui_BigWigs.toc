@@ -1,0 +1,9 @@
+## Interface: 40000
+## Title: |cffC495DDTukui BigWigs|r
+## Notes: Tukui BigWigs Skin
+## Author: Affli @ Howling Fjord (RU)
+## Version: 1
+## X-Website: http://github.com/Affli/Tukui_BigWigs 
+## RequiredDeps: Tukui, BigWigs
+
+Tukui_BigWigs.lua
