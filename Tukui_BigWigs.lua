@@ -27,9 +27,6 @@ end
 -- init some tables to store backgrounds
 local freebg = {}
 
--- init some vars to store methods
-local setpoint, setwidth, setscale
-
 -- styling functions
 local createbg = function()
 	local bg=CreateFrame("Frame")
@@ -61,9 +58,9 @@ local function freestyle(bar)
 	end
 
 	-- replace dummies with original method functions
-	bar.candyBarIconFrame.SetPoint=setpoint
-	bar.candyBarIconFrame.SetWidth=setwidth
-	bar.SetScale=setscale
+	bar.candyBarBar.SetPoint=bar.candyBarBar.OldSetPoint
+	bar.candyBarIconFrame.SetWidth=bar.candyBarIconFrame.OldSetWidth
+	bar.SetScale=bar.OldSetScale
 	
 end
 
@@ -72,7 +69,7 @@ local applystyle = function(bar)
 	-- general bar settings
 	bar:SetHeight(buttonsize/4)
 	bar:SetScale(1)
-	setscale=bar.SetScale
+	bar.OldSetScale=bar.SetScale
 	bar.SetScale=T.dummy
 
 	-- create or reparent and use bar background
@@ -119,7 +116,7 @@ local applystyle = function(bar)
 	-- setup bar positions and look
 	bar.candyBarBar:ClearAllPoints()
 	bar.candyBarBar:SetAllPoints(bar)
-	setpoint = bar.candyBarBar.SetPoint
+	bar.candyBarBar.OldSetPoint = bar.candyBarBar.SetPoint
 	bar.candyBarBar.SetPoint=T.dummy
 	bar.candyBarBar:SetStatusBarTexture(C.media.normTex)
 	if barcolor and not bar.data["bigwigs:emphasized"]==true then bar.candyBarBar:SetStatusBarColor(barcolor.r, barcolor.g, barcolor.b, 1) end
@@ -129,7 +126,7 @@ local applystyle = function(bar)
 	bar.candyBarIconFrame:ClearAllPoints()
 	bar.candyBarIconFrame:Point("BOTTOMLEFT", bar, "BOTTOMLEFT", -buttonsize - buttonsize/3 , 0)
 	bar.candyBarIconFrame:SetSize(buttonsize, buttonsize)
-	setwidth = bar.candyBarIconFrame.SetWidth
+	bar.candyBarIconFrame.OldSetWidth = bar.candyBarIconFrame.SetWidth
 	bar.candyBarIconFrame.SetWidth=T.dummy
 	bar.candyBarIconFrame:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 end
