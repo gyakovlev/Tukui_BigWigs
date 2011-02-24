@@ -149,8 +149,12 @@ local function registerStyle()
 		})
 	end
 	if prox and skinrange and BigWigs.pluginCore.modules.Bars.db.profile.barStyle == "Tukui_BigWigs" then
-		hooksecurefunc(BigWigs.pluginCore.modules.Proximity, "RestyleWindow", function() BigWigsProximityAnchor:SetTemplate("Transparent")if drawshadow then
-		BigWigsProximityAnchor:CreateShadow("Default") end end)
+		hooksecurefunc(BigWigs.pluginCore.modules.Proximity, "RestyleWindow", function()
+			BigWigsProximityAnchor:SetTemplate("Transparent")
+			if drawshadow then
+				BigWigsProximityAnchor:CreateShadow("Default")
+			end
+		end)
 	end
 end
 
@@ -201,7 +205,7 @@ StaticPopupDialogs["TUKUIBW"] = {
 	button2 = CANCEL,
 	OnAccept = function()
 		BigWigs.pluginCore.modules.Bars.db.profile.barStyle="Tukui_BigWigs"
-		ReloadUI()
+		if InCombatLockdown() then pr(ERR_NOT_IN_COMBAT) pr("Reload your UI to apply skin.") else ReloadUI() end
 	end,
     timeout = 0,
     whileDead = 1,
