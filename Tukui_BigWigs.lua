@@ -7,44 +7,63 @@ All rights reserved.
 
 local T, C, L = unpack(Tukui)
 
+--local classcolor = RAID_CLASS_COLORS[T.myclass]
+local buttonsize
+
+-- get buttonsize from Tukui
+if C.actionbar.buttonsize and type(C.actionbar.buttonsize)=="number" then
+	buttonsize=C.actionbar.buttonsize
+else
+	buttonsize=30	-- just to be safe
+end
+-- init some tables to store backgrounds
 local freebg = {}
 local freeibg = {}
-local setpoint, setpoint2
+
+-- init some vars to store methods
+local setpoint, setpoint2, setwidth, setscale
+
 local createbg = function()
 	local bg=CreateFrame("Frame")
 	bg:SetTemplate("Default")
 	return bg
 end
 local function freestyle(bar)
+	-- reparent and hide bar background
 	local bg = bar:Get("bigwigs:tukui_bigwigs:bg")
-	local ibg = bar:Get("bigwigs:tukui_bigwigs:ibg")
 	if bg then
 		bg:ClearAllPoints()
 		bg:SetParent(UIParent)
 		bg:Hide()
 		freebg[#freebg + 1] = bg
 	end
+	-- reparent and hide icon background
+	local ibg = bar:Get("bigwigs:tukui_bigwigs:ibg")
 	if ibg then
 		ibg:ClearAllPoints()
 		ibg:SetParent(UIParent)
 		ibg:Hide()
 		freeibg[#freeibg + 1] = ibg
 	end
+	-- replace dummies with original functions
 	bar.candyBarIconFrame.SetPoint=setpoint
+	bar.candyBarBackground.SetPoint=setpoint2
+	bar.candyBarIconFrame.SetWidth=setwidth
+	bar.SetScale=setscale
+	
 end
 
 local applystyle = function(bar)
+	-- debug
 	BAR=bar
- 
-	bar.candyBarBar:SetStatusBarTexture(C.media.normTex)
-	bar.candyBarLabel:SetFont(C["media"].uffont, 12, "OUTLINE")
-	bar.candyBarDuration:SetFont(C["media"].uffont, 12, "OUTLINE")
-	bar.candyBarBackground:SetTexture(C.media.normTex)
 
---	print(bar.candyBarIconFrame:GetPoint())
-
+	-- general bar settings
+	bar:SetHeight(buttonsize/4)
 	bar:SetScale(1)
+	bar.SetScale=T.dummy
+	setscale=bar.SetScale
 
+	-- create or reparent and use bar background
 	local bg=nil
 	if #freebg > 0 then
 		bg = table.remove(freebg)
@@ -59,7 +78,9 @@ local applystyle = function(bar)
 	bg:Show()
 	bar:Set("bigwigs:tukui_bigwigs:bg", bg)
 
+	-- create or reparent and use icon background
 	local ibg=nil
+	if bar.candyBarIconFrame:GetTexture() then
 	if #freeibg > 0 then
 		ibg = table.remove(freeibg)
 	else
@@ -72,35 +93,29 @@ local applystyle = function(bar)
 	ibg:SetFrameStrata("BACKGROUND")
 	ibg:Show()
 	bar:Set("bigwigs:tukui_bigwigs:ibg", ibg)
+	end
 
-	-- rearrange
-	bar.candyBarBackground:ClearAllPoints()
-	bar.candyBarBackground:SetParent(bar)
-	bar.candyBarBackground:SetAllPoints(bar)
+	-- setup timer and bar name fonts and positions
+	bar.candyBarBar:SetStatusBarTexture(C.media.normTex)
+	bar.candyBarLabel:SetFont(C["media"].uffont, 12, "OUTLINE")
+	bar.candyBarLabel:Point("BOTTOMLEFT", bar, "TOPLEFT", -1, 4)
+	bar.candyBarDuration:SetFont(C["media"].uffont, 12, "OUTLINE")
+	bar.candyBarDuration:Point("BOTTOMRIGHT", bar, "TOPRIGHT", -1, 4)
+	bar.candyBarBackground:SetTexture(C.media.normTex)
 
+	-- setup bar positions and look
 	bar.candyBarBar:ClearAllPoints()
-	bar.candyBarBar:SetParent(bar)
 	bar.candyBarBar:SetAllPoints(bar)
-
 	setpoint = bar.candyBarBar.SetPoint
 	bar.candyBarBar.SetPoint=T.dummy
 
-	setpoint2 = bar.candyBarBackground.SetPoint
-	bar.candyBarBackground.SetPoint=T.dummy
-
-
---	local _, anch, _, _, _ = bar.candyBarIconFrame:GetPoint()
---	bar.candyBarIconFrame:ClearAllPoints()
---	bar.candyBarIconFrame:SetParent(bar)
-	bar.candyBarIconFrame:Point("TOPLEFT", bar, "TOPLEFT", -30 , 0)
---	bar.candyBarIconFrame:Point("BOTTOMLEFT", bar, "BOTTOMLEFT", -30 , 0)
---	bg:HookScript("OnShow", function(self)
---		bar.candyBarIconFrame:ClearAllPoints()
---		bar.candyBarIconFrame:SetParent(bar)
---		bar.candyBarIconFrame:Point("TOPLEFT", bar, "TOPLEFT", -20 , 0)
---		bar.candyBarIconFrame:Point("BOTTOMLEFT", bar, "BOTTOMLEFT", -20 , 0)
---	end)
-	--	bar.candyBarBar:Height(20)
+	-- setup icon positions and other things
+	bar.candyBarIconFrame:ClearAllPoints()
+	bar.candyBarIconFrame:Point("BOTTOMLEFT", bar, "BOTTOMLEFT", -buttonsize - buttonsize/3 , 0)
+	bar.candyBarIconFrame:SetSize(buttonsize, buttonsize)
+	setwidth = bar.candyBarIconFrame.SetWidth
+	bar.candyBarIconFrame.SetWidth=T.dummy
+	bar.candyBarIconFrame:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 end
 	
 
@@ -115,7 +130,8 @@ local function registerStyle()
 	bars:RegisterBarStyle("identifier", {
 		apiVersion = 1,
 		version = 1,
-		GetSpacing = function(bar) return T.Scale(6) end,
+	--	GetSpacing = function(bar) return buttonsize - buttonsize/4 end,
+		GetSpacing = function(bar) return buttonsize end,
 		ApplyStyle = applystyle,
 		BarStopped = freestyle,
 		GetStyleName = function() return "Tukui_BigWigs" end,
