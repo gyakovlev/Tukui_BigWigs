@@ -26,10 +26,9 @@ end
 
 -- init some tables to store backgrounds
 local freebg = {}
-local freeibg = {}
 
 -- init some vars to store methods
-local setpoint, setpoint2, setwidth, setscale
+local setpoint, setwidth, setscale
 
 -- styling functions
 local createbg = function()
@@ -53,17 +52,16 @@ local function freestyle(bar)
 	end
 
 	-- reparent and hide icon background
-	local ibg = bar:Get("bigwigs:tukui_bigwigs:ibg")
+	local ibg = bar:Get("bigwigs:tukui_bigwigs:bg")
 	if ibg then
 		ibg:ClearAllPoints()
 		ibg:SetParent(UIParent)
 		ibg:Hide()
-		freeibg[#freeibg + 1] = ibg
+		freebg[#freebg + 1] = ibg
 	end
 
 	-- replace dummies with original method functions
 	bar.candyBarIconFrame.SetPoint=setpoint
-	bar.candyBarBackground.SetPoint=setpoint2
 	bar.candyBarIconFrame.SetWidth=setwidth
 	bar.SetScale=setscale
 	
@@ -74,8 +72,8 @@ local applystyle = function(bar)
 	-- general bar settings
 	bar:SetHeight(buttonsize/4)
 	bar:SetScale(1)
-	bar.SetScale=T.dummy
 	setscale=bar.SetScale
+	bar.SetScale=T.dummy
 
 	-- create or reparent and use bar background
 	local bg=nil
@@ -95,8 +93,8 @@ local applystyle = function(bar)
 	-- create or reparent and use icon background
 	local ibg=nil
 	if bar.candyBarIconFrame:GetTexture() then
-		if #freeibg > 0 then
-			ibg = table.remove(freeibg)
+		if #freebg > 0 then
+			ibg = table.remove(freebg)
 		else
 			ibg = createbg()
 		end
@@ -106,11 +104,10 @@ local applystyle = function(bar)
 		ibg:Point("BOTTOMRIGHT", bar.candyBarIconFrame, "BOTTOMRIGHT", 2, -2)
 		ibg:SetFrameStrata("BACKGROUND")
 		ibg:Show()
-		bar:Set("bigwigs:tukui_bigwigs:ibg", ibg)
+		bar:Set("bigwigs:tukui_bigwigs:bg", ibg)
 	end
 
 	-- setup timer and bar name fonts and positions
-
 	bar.candyBarLabel:SetFont(C["media"].uffont, 12, "OUTLINE")
 	bar.candyBarLabel:ClearAllPoints()
 	bar.candyBarLabel:Point("BOTTOMLEFT", bar, "TOPLEFT", -2, 4)
