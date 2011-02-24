@@ -12,6 +12,7 @@ local drawshadow = false		-- draw Tukui shadows around frames.
 local skinrange = true			-- skin distance window
 ----------------------------------------
 
+-- init Tukui engine
 local T, C, L = unpack(Tukui)
 local barcolor = classcolor and RAID_CLASS_COLORS[T.myclass] -- or {["r"]=.1,["g"]=.1,["b"]=1,} -- uncomment the following to use your own color for the bars
 local buttonsize
@@ -30,7 +31,7 @@ local freeibg = {}
 -- init some vars to store methods
 local setpoint, setpoint2, setwidth, setscale
 
--- style functions
+-- styling functions
 local createbg = function()
 	local bg=CreateFrame("Frame")
 	bg:SetTemplate("Default")
@@ -60,7 +61,7 @@ local function freestyle(bar)
 		freeibg[#freeibg + 1] = ibg
 	end
 
-	-- replace dummies with original functions
+	-- replace dummies with original method functions
 	bar.candyBarIconFrame.SetPoint=setpoint
 	bar.candyBarBackground.SetPoint=setpoint2
 	bar.candyBarIconFrame.SetWidth=setwidth
@@ -70,7 +71,6 @@ end
 
 local applystyle = function(bar)
 
-	BAR=bar
 	-- general bar settings
 	bar:SetHeight(buttonsize/4)
 	bar:SetScale(1)
@@ -141,7 +141,6 @@ end
 local f = CreateFrame("Frame")
 
 local function registerStyle()
-
 	if not BigWigs then return end
 	local bars = BigWigs:GetPlugin("Bars", true)
 	local prox = BigWigs:GetPlugin("Proximity", true)
@@ -155,20 +154,62 @@ local function registerStyle()
 			GetStyleName = function() return "Tukui_BigWigs" end,
 		})
 	end
-	if prox and skinrange then
+	if prox and skinrange and BigWigs.pluginCore.modules.Bars.db.profile.barStyle == "Tukui_BigWigs" then
 		hooksecurefunc(BigWigs.pluginCore.modules.Proximity, "RestyleWindow", function() BigWigsProximityAnchor:SetTemplate("Transparent")if drawshadow then
 		BigWigsProximityAnchor:CreateShadow("Default") end end)
 	end
 end
-f:RegisterEvent("ADDON_LOADED")
 
-local reason = nil
+f:RegisterEvent("ADDON_LOADED")
 f:SetScript("OnEvent", function(self, event, msg)
 	if event == "ADDON_LOADED" then
 		if  msg == "BigWigs_Plugins" then
-			BigWigs.pluginCore.modules.Bars.db.profile.barStyle="Tukui_BigWigs"
+			--[[
+			--	BigWigs uses single profile by default, so we should not upload class colors to shared profile. Leaving commented.
+				BigWigs.pluginCore.modules.Bars.db.profile.barStyle="Tukui_BigWigs"
+				BigWigs3DB.namespaces.BigWigs_Plugins_Colors.profiles.Default.barColor.BigWigs_Plugins_Colors.default={barcolor.r, barcolor.g, barcolor.b}
+			]]--	
 			registerStyle()
 			f:UnregisterEvent("ADDON_LOADED")
 		end
 	end
 end)
+
+local pr = function(msg)
+    print("|cffC495DDTukui BigWigs|r:", tostring(msg))
+end
+
+SLASH_TUKUIDBM1 = "/tukuibigwigs"
+SlashCmdList["TUKUIDBM"] = function(msg)
+	if(msg=="apply") then
+		SlashCmdList["BigWigs"]()
+		StaticPopup_Show("TUKUIBW")        
+	elseif(msg=="test") then
+		SlashCmdList["BigWigs"]()
+		BigWigs.pluginCore.modules.Proximity.Test(BigWigs.pluginCore.modules.Proximity)
+		HideUIPanel(InterfaceOptionsFrame)
+		BigWigs:Test()
+		BigWigs:Test()
+		BigWigs:Test()
+		BigWigs:Test()
+		BigWigs:Test()
+		
+	else
+		pr("use |cffFF0000/tukuibigwigs apply|r to apply BigWigs settings.")
+		pr("use |cffFF0000/tukuibigwigs test|r to launch BigWigs testmode.")
+	end
+end
+
+StaticPopupDialogs["TUKUIBW"] = {
+	text = "We need to set some BigWigs options to apply Tukui BigWigs skin.\nMost of your settings will remain untouched.",
+	button1 = ACCEPT,
+	button2 = CANCEL,
+	OnAccept = function()
+		BigWigs.pluginCore.modules.Bars.db.profile.barStyle="Tukui_BigWigs"
+		ReloadUI()
+	end,
+    timeout = 0,
+    whileDead = 1,
+    hideOnEscape = true,
+}
+
