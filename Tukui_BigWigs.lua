@@ -7,11 +7,12 @@ All rights reserved.
 
 -- little config
 ----------------------------------------
-local classcolor = true		-- classcolored bars
+local classcolor = true			-- classcolored bars
+local drawshadow = false		-- draw Tukui shadows around frames.
+local skinrange = true			-- skin distance window
 ----------------------------------------
 
 local T, C, L = unpack(Tukui)
-
 local barcolor = classcolor and RAID_CLASS_COLORS[T.myclass] -- or {["r"]=.1,["g"]=.1,["b"]=1,} -- uncomment the following to use your own color for the bars
 local buttonsize
 
@@ -21,6 +22,7 @@ if C.actionbar.buttonsize and type(C.actionbar.buttonsize)=="number" then
 else
 	buttonsize=30	-- just to be safe
 end
+
 -- init some tables to store backgrounds
 local freebg = {}
 local freeibg = {}
@@ -28,12 +30,18 @@ local freeibg = {}
 -- init some vars to store methods
 local setpoint, setpoint2, setwidth, setscale
 
+-- style functions
 local createbg = function()
 	local bg=CreateFrame("Frame")
 	bg:SetTemplate("Default")
+	if drawshadow then
+		bg:CreateShadow("Default")
+	end
 	return bg
 end
+
 local function freestyle(bar)
+
 	-- reparent and hide bar background
 	local bg = bar:Get("bigwigs:tukui_bigwigs:bg")
 	if bg then
@@ -42,6 +50,7 @@ local function freestyle(bar)
 		bg:Hide()
 		freebg[#freebg + 1] = bg
 	end
+
 	-- reparent and hide icon background
 	local ibg = bar:Get("bigwigs:tukui_bigwigs:ibg")
 	if ibg then
@@ -50,6 +59,7 @@ local function freestyle(bar)
 		ibg:Hide()
 		freeibg[#freeibg + 1] = ibg
 	end
+
 	-- replace dummies with original functions
 	bar.candyBarIconFrame.SetPoint=setpoint
 	bar.candyBarBackground.SetPoint=setpoint2
@@ -59,6 +69,8 @@ local function freestyle(bar)
 end
 
 local applystyle = function(bar)
+
+	BAR=bar
 	-- general bar settings
 	bar:SetHeight(buttonsize/4)
 	bar:SetScale(1)
@@ -113,7 +125,7 @@ local applystyle = function(bar)
 	setpoint = bar.candyBarBar.SetPoint
 	bar.candyBarBar.SetPoint=T.dummy
 	bar.candyBarBar:SetStatusBarTexture(C.media.normTex)
-	if barcolor then bar.candyBarBar:SetStatusBarColor(barcolor.r, barcolor.g, barcolor.b, 1) end
+	if barcolor and not bar.data["bigwigs:emphasized"]==true then bar.candyBarBar:SetStatusBarColor(barcolor.r, barcolor.g, barcolor.b, 1) end
 	bar.candyBarBackground:SetTexture(C.media.normTex)
 
 	-- setup icon positions and other things
@@ -129,30 +141,34 @@ end
 local f = CreateFrame("Frame")
 
 local function registerStyle()
+
 	if not BigWigs then return end
 	local bars = BigWigs:GetPlugin("Bars", true)
-	if not bars then return end
-	f:UnregisterEvent("ADDON_LOADED")
-
-	bars:RegisterBarStyle("identifier", {
-		apiVersion = 1,
-		version = 1,
-		GetSpacing = function(bar) return buttonsize end,
-		ApplyStyle = applystyle,
-		BarStopped = freestyle,
-		GetStyleName = function() return "Tukui_BigWigs" end,
-	})
+	local prox = BigWigs:GetPlugin("Proximity", true)
+	if bars then
+		bars:RegisterBarStyle("Tukui_BigWigs", {
+			apiVersion = 1,
+			version = 1,
+			GetSpacing = function(bar) return buttonsize end,
+			ApplyStyle = applystyle,
+			BarStopped = freestyle,
+			GetStyleName = function() return "Tukui_BigWigs" end,
+		})
+	end
+	if prox and skinrange then
+		hooksecurefunc(BigWigs.pluginCore.modules.Proximity, "RestyleWindow", function() BigWigsProximityAnchor:SetTemplate("Transparent")if drawshadow then
+		BigWigsProximityAnchor:CreateShadow("Default") end end)
+	end
 end
 f:RegisterEvent("ADDON_LOADED")
 
 local reason = nil
 f:SetScript("OnEvent", function(self, event, msg)
 	if event == "ADDON_LOADED" then
-		if msg == "BigWigs_Options" then
-		--	hooksecurefunc(BigWigs.pluginCore.modules.Proximity, "RestyleWindow", function() BigWigsProximityAnchor:SetTemplate("Default") end)
-		--	registerStyle()
-		elseif  msg == "BigWigs_Plugins" then
-			registerStyle()	
+		if  msg == "BigWigs_Plugins" then
+			BigWigs.pluginCore.modules.Bars.db.profile.barStyle="Tukui_BigWigs"
+			registerStyle()
+			f:UnregisterEvent("ADDON_LOADED")
 		end
 	end
 end)
