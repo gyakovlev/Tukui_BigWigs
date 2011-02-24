@@ -183,6 +183,7 @@ SLASH_TUKUIDBM1 = "/tukuibigwigs"
 SlashCmdList["TUKUIDBM"] = function(msg)
 	if(msg=="apply") then
 		SlashCmdList["BigWigs"]()
+		HideUIPanel(InterfaceOptionsFrame)
 		StaticPopup_Show("TUKUIBW")        
 	elseif(msg=="test") then
 		SlashCmdList["BigWigs"]()
