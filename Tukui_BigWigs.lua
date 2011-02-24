@@ -177,8 +177,8 @@ local pr = function(msg)
     print("|cffC495DDTukui BigWigs|r:", tostring(msg))
 end
 
-SLASH_TUKUIDBM1 = "/tukuibigwigs"
-SlashCmdList["TUKUIDBM"] = function(msg)
+SLASH_TUKUIBW1 = "/tukuibigwigs"
+SlashCmdList["TUKUIBW"] = function(msg)
 	if(msg=="apply") then
 		SlashCmdList["BigWigs"]()
 		HideUIPanel(InterfaceOptionsFrame)
