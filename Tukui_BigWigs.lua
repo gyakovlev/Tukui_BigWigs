@@ -5,14 +5,19 @@ All rights reserved.
 
 ]]--
 
+-- little config
+----------------------------------------
+local classcolor = true		-- classcolored bars
+----------------------------------------
+
 local T, C, L = unpack(Tukui)
 
---local classcolor = RAID_CLASS_COLORS[T.myclass]
+local barcolor = classcolor and RAID_CLASS_COLORS[T.myclass] -- or {["r"]=.1,["g"]=.1,["b"]=1,} -- uncomment the following to use your own color for the bars
 local buttonsize
 
 -- get buttonsize from Tukui
 if C.actionbar.buttonsize and type(C.actionbar.buttonsize)=="number" then
-	buttonsize=C.actionbar.buttonsize
+	buttonsize=T.Scale(C.actionbar.buttonsize-2)
 else
 	buttonsize=30	-- just to be safe
 end
@@ -54,9 +59,6 @@ local function freestyle(bar)
 end
 
 local applystyle = function(bar)
-	-- debug
-	BAR=bar
-
 	-- general bar settings
 	bar:SetHeight(buttonsize/4)
 	bar:SetScale(1)
@@ -81,33 +83,38 @@ local applystyle = function(bar)
 	-- create or reparent and use icon background
 	local ibg=nil
 	if bar.candyBarIconFrame:GetTexture() then
-	if #freeibg > 0 then
-		ibg = table.remove(freeibg)
-	else
-		ibg = createbg()
-	end
-	ibg:SetParent(bar)
-	ibg:ClearAllPoints()
-	ibg:Point("TOPLEFT", bar.candyBarIconFrame, "TOPLEFT", -2, 2)
-	ibg:Point("BOTTOMRIGHT", bar.candyBarIconFrame, "BOTTOMRIGHT", 2, -2)
-	ibg:SetFrameStrata("BACKGROUND")
-	ibg:Show()
-	bar:Set("bigwigs:tukui_bigwigs:ibg", ibg)
+		if #freeibg > 0 then
+			ibg = table.remove(freeibg)
+		else
+			ibg = createbg()
+		end
+		ibg:SetParent(bar)
+		ibg:ClearAllPoints()
+		ibg:Point("TOPLEFT", bar.candyBarIconFrame, "TOPLEFT", -2, 2)
+		ibg:Point("BOTTOMRIGHT", bar.candyBarIconFrame, "BOTTOMRIGHT", 2, -2)
+		ibg:SetFrameStrata("BACKGROUND")
+		ibg:Show()
+		bar:Set("bigwigs:tukui_bigwigs:ibg", ibg)
 	end
 
 	-- setup timer and bar name fonts and positions
-	bar.candyBarBar:SetStatusBarTexture(C.media.normTex)
+
 	bar.candyBarLabel:SetFont(C["media"].uffont, 12, "OUTLINE")
-	bar.candyBarLabel:Point("BOTTOMLEFT", bar, "TOPLEFT", -1, 4)
+	bar.candyBarLabel:ClearAllPoints()
+	bar.candyBarLabel:Point("BOTTOMLEFT", bar, "TOPLEFT", -2, 4)
+
 	bar.candyBarDuration:SetFont(C["media"].uffont, 12, "OUTLINE")
-	bar.candyBarDuration:Point("BOTTOMRIGHT", bar, "TOPRIGHT", -1, 4)
-	bar.candyBarBackground:SetTexture(C.media.normTex)
+	bar.candyBarDuration:ClearAllPoints()
+	bar.candyBarDuration:Point("BOTTOMRIGHT", bar, "TOPRIGHT", 2, 4)
 
 	-- setup bar positions and look
 	bar.candyBarBar:ClearAllPoints()
 	bar.candyBarBar:SetAllPoints(bar)
 	setpoint = bar.candyBarBar.SetPoint
 	bar.candyBarBar.SetPoint=T.dummy
+	bar.candyBarBar:SetStatusBarTexture(C.media.normTex)
+	if barcolor then bar.candyBarBar:SetStatusBarColor(barcolor.r, barcolor.g, barcolor.b, 1) end
+	bar.candyBarBackground:SetTexture(C.media.normTex)
 
 	-- setup icon positions and other things
 	bar.candyBarIconFrame:ClearAllPoints()
@@ -130,7 +137,6 @@ local function registerStyle()
 	bars:RegisterBarStyle("identifier", {
 		apiVersion = 1,
 		version = 1,
-	--	GetSpacing = function(bar) return buttonsize - buttonsize/4 end,
 		GetSpacing = function(bar) return buttonsize end,
 		ApplyStyle = applystyle,
 		BarStopped = freestyle,
@@ -142,8 +148,11 @@ f:RegisterEvent("ADDON_LOADED")
 local reason = nil
 f:SetScript("OnEvent", function(self, event, msg)
 	if event == "ADDON_LOADED" then
-		if msg == "BigWigs" or msg == "BigWigs_Plugins" then
-			registerStyle()
+		if msg == "BigWigs_Options" then
+		--	hooksecurefunc(BigWigs.pluginCore.modules.Proximity, "RestyleWindow", function() BigWigsProximityAnchor:SetTemplate("Default") end)
+		--	registerStyle()
+		elseif  msg == "BigWigs_Plugins" then
+			registerStyle()	
 		end
 	end
 end)
