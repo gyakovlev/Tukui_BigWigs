@@ -21,11 +21,12 @@ Screenshot worth a thousand words: https://img.skitch.com/20110224-nxyfpqt7p5mig
 		local classcolor = true			-- classcolored bars
 		local drawshadow = false		-- draw Tukui shadows around frames.
 		local skinrange = true			-- skin distance window
+		local disablescaling = true		-- disables bar scaling (including emphasized bars).
 		----------------------------------------		
 
 	FAQ:
 		Q) Should i run /tukuibigwigs apply every time the skin updates?
-			A) No. Only on first install.
+			A) No. Only on first install and if you scerw up font settings or bar styles.
 
 		Q) Can i include this addon into my Tukui-edit?
 			A) Sure.

@@ -10,6 +10,7 @@ All rights reserved.
 local classcolor = true			-- classcolored bars
 local drawshadow = false		-- draw Tukui shadows around frames.
 local skinrange = true			-- skin distance window
+local disablescaling = true		-- disables bar scaling (including emphasized bars). 
 ----------------------------------------
 
 -- init Tukui engine
@@ -60,7 +61,9 @@ local function freestyle(bar)
 	-- replace dummies with original method functions
 	bar.candyBarBar.SetPoint=bar.candyBarBar.OldSetPoint
 	bar.candyBarIconFrame.SetWidth=bar.candyBarIconFrame.OldSetWidth
-	bar.SetScale=bar.OldSetScale
+	if disablescaling then 
+		bar.SetScale= disablescaling and bar.OldSetScale
+	end
 	
 end
 
@@ -68,9 +71,11 @@ local applystyle = function(bar)
 
 	-- general bar settings
 	bar:SetHeight(buttonsize/4)
-	bar:SetScale(1)
-	bar.OldSetScale=bar.SetScale
-	bar.SetScale=T.dummy
+	if disablescaling then
+		bar:SetScale(1)
+		bar.OldSetScale=bar.SetScale
+		bar.SetScale=T.dummy
+	end
 
 	-- create or reparent and use bar background
 	local bg=nil
