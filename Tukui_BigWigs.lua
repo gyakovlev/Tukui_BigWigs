@@ -62,7 +62,7 @@ local function freestyle(bar)
 	bar.candyBarBar.SetPoint=bar.candyBarBar.OldSetPoint
 	bar.candyBarIconFrame.SetWidth=bar.candyBarIconFrame.OldSetWidth
 	if disablescaling then 
-		bar.SetScale= disablescaling and bar.OldSetScale
+		bar.SetScale=bar.OldSetScale
 	end
 	
 end
