@@ -105,11 +105,15 @@ local applystyle = function(bar)
 	end
 
 	-- setup timer and bar name fonts and positions
-	bar.candyBarLabel:SetFont(C["media"].uffont, 12, "OUTLINE")
+	bar.candyBarLabel:SetFont(C["media"].font, 12, "OUTLINE")
+	bar.candyBarLabel:SetShadowColor(0, 0, 0, 0)
+	bar.candyBarLabel:SetJustifyH("LEFT")
 	bar.candyBarLabel:ClearAllPoints()
 	bar.candyBarLabel:Point("BOTTOMLEFT", bar, "TOPLEFT", -2, 4)
-
-	bar.candyBarDuration:SetFont(C["media"].uffont, 12, "OUTLINE")
+	
+	bar.candyBarDuration:SetFont(C["media"].font, 12, "OUTLINE")
+	bar.candyBarDuration:SetShadowColor(0, 0, 0, 0)
+	bar.candyBarDuration:SetJustifyH("RIGHT")
 	bar.candyBarDuration:ClearAllPoints()
 	bar.candyBarDuration:Point("BOTTOMRIGHT", bar, "TOPRIGHT", 2, 4)
 
@@ -205,6 +209,11 @@ StaticPopupDialogs["TUKUIBW"] = {
 	button2 = CANCEL,
 	OnAccept = function()
 		BigWigs.pluginCore.modules.Bars.db.profile.barStyle="Tukui_BigWigs"
+		BigWigs.pluginCore.modules.Bars.db.profile.font=C["media"].font
+		BigWigs.pluginCore.modules.Messages.db.profile.font=C["media"].font
+		BigWigs.pluginCore.modules.Messages.db.profile.outline="OUTLINE"
+		BigWigs.pluginCore.modules.Proximity.db.profile.font=C["media"].font
+
 		if InCombatLockdown() then pr(ERR_NOT_IN_COMBAT) pr("Reload your UI to apply skin.") else ReloadUI() end
 	end,
     timeout = 0,
