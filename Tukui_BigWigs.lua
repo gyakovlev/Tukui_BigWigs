@@ -50,7 +50,7 @@ local function freestyle(bar)
 	end
 
 	-- reparent and hide icon background
-	local ibg = bar:Get("bigwigs:tukui_bigwigs:bg")
+	local ibg = bar:Get("bigwigs:tukui_bigwigs:ibg")
 	if ibg then
 		ibg:ClearAllPoints()
 		ibg:SetParent(UIParent)
@@ -64,6 +64,29 @@ local function freestyle(bar)
 	if disablescaling then 
 		bar.SetScale=bar.OldSetScale
 	end
+	--Reset Positions
+	--Icon
+	bar.candyBarIconFrame:ClearAllPoints()
+	bar.candyBarIconFrame:SetPoint("TOPLEFT")
+	bar.candyBarIconFrame:SetPoint("BOTTOMLEFT")
+	bar.candyBarIconFrame:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+
+	--Status Bar
+	bar.candyBarBar:ClearAllPoints()
+	bar.candyBarBar:SetPoint("TOPRIGHT")
+	bar.candyBarBar:SetPoint("BOTTOMRIGHT")
+
+	--BG
+	bar.candyBarBackground:SetAllPoints()
+
+	--Duration
+	bar.candyBarDuration:ClearAllPoints()
+	bar.candyBarDuration:SetPoint("RIGHT", bar.candyBarBar, "RIGHT", -2, 0)
+
+	--Name
+	bar.candyBarLabel:ClearAllPoints()
+	bar.candyBarLabel:SetPoint("LEFT", bar.candyBarBar, "LEFT", 2, 0)
+	bar.candyBarLabel:SetPoint("RIGHT", bar.candyBarBar, "RIGHT", -2, 0)
 	
 end
 
@@ -106,7 +129,7 @@ local applystyle = function(bar)
 		ibg:Point("BOTTOMRIGHT", bar.candyBarIconFrame, "BOTTOMRIGHT", 2, -2)
 		ibg:SetFrameStrata("BACKGROUND")
 		ibg:Show()
-		bar:Set("bigwigs:tukui_bigwigs:bg", ibg)
+		bar:Set("bigwigs:tukui_bigwigs:ibg", ibg)
 	end
 
 	-- setup timer and bar name fonts and positions
