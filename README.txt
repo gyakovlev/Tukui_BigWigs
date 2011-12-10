@@ -25,6 +25,7 @@ Screenshot worth a thousand words: https://img.skitch.com/20110224-nxyfpqt7p5mig
 		local classcolor = true			-- classcolored bars
 		local drawshadow = false		-- draw Tukui shadows around frames.
 		local skinrange = true			-- skin distance window
+		local transparent = true		-- use semi-transparent template on bars.
 		local disablescaling = true		-- disables bar scaling (including emphasized bars).
 		----------------------------------------		
 

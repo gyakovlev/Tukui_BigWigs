@@ -10,7 +10,7 @@ All rights reserved.
 local classcolor = true			-- classcolored bars
 local drawshadow = false		-- draw Tukui shadows around frames.
 local skinrange = true			-- skin distance window
-local trasparent = true			-- use semi-transparent template on bars.
+local transparent = true			-- use semi-transparent template on bars.
 local disablescaling = true		-- disables bar scaling (including emphasized bars). 
 ----------------------------------------
 
