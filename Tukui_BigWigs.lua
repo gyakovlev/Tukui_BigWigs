@@ -10,6 +10,7 @@ All rights reserved.
 local classcolor = true			-- classcolored bars
 local drawshadow = false		-- draw Tukui shadows around frames.
 local skinrange = true			-- skin distance window
+local trasparent = true			-- use semi-transparent template on bars.
 local disablescaling = true		-- disables bar scaling (including emphasized bars). 
 ----------------------------------------
 
@@ -31,7 +32,11 @@ local freebg = {}
 -- styling functions
 local createbg = function()
 	local bg=CreateFrame("Frame")
-	bg:SetTemplate("Default")
+	if transparent then
+		bg:SetTemplate("Transparent")
+	else
+		bg:SetTemplate("Default")
+	end
 	if drawshadow then
 		bg:CreateShadow("Default")
 	end
